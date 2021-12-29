@@ -3,6 +3,11 @@ import './styles.css';
 import Pagination from 'components/Pagination';
 import EmployeeCard from 'components/EmployeeCard';
 import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { SpringPage } from 'types/vendor/spring';
+import { Employee } from 'types/employee';
+import { AxiosRequestConfig } from 'axios';
+import { requestBackend } from 'util/requests';
 
 const employeeHardCode = { // delete
   id: 1,
@@ -16,6 +21,25 @@ const employeeHardCode = { // delete
 
 const List = () => {
 
+  const [page, setPage] = useState<SpringPage<Employee>>();
+
+  useEffect(() => {
+    const config: AxiosRequestConfig = {
+      method: "GET",
+      url: "/employees",
+      withCredentials: true,
+      params: {
+        size: 4
+      }
+    };
+
+    requestBackend(config)
+      .then(response => {
+        setPage(response.data);
+      })
+
+  }, []);
+
   const handlePageChange = (pageNumber: number) => {
     // to do
   };
@@ -28,10 +52,7 @@ const List = () => {
         </button>
       </Link>
 
-      <EmployeeCard employee={employeeHardCode} />
-      <EmployeeCard employee={employeeHardCode} />
-      <EmployeeCard employee={employeeHardCode} />
-      <EmployeeCard employee={employeeHardCode} />
+      {page && page.content.map((employee, i) => (<EmployeeCard employee={employee} key={i} />))}
 
       <Pagination
         forcePage={0}
