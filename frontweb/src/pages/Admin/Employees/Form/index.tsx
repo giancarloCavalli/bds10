@@ -8,6 +8,7 @@ import { Department } from 'types/department';
 import './styles.css';
 import { AxiosRequestConfig } from 'axios';
 import { requestBackend } from 'util/requests';
+import { toast } from 'react-toastify';
 
 const Form = () => {
 
@@ -42,8 +43,22 @@ const Form = () => {
     history.push("/admin/employees");
   };
 
-  const onSubmit = () => {
-    console.log("PASSEI AQUI");
+  const onSubmit = (formData: Employee) => {
+    const config: AxiosRequestConfig = {
+      method: "POST",
+      url: "/employees",
+      withCredentials: true,
+      data: formData
+    };
+
+    requestBackend(config)
+      .then(response => {
+        toast.info("Cadastrado com sucesso");
+        history.push("/admin/employees");
+      })
+      .catch(error => {
+        toast.error("Erro ao cadastrar funcionário")
+      });
   };
 
   return (
