@@ -20,9 +20,15 @@ const employeeHardCode = { // delete
   }
 };
 
+type PageControl = {
+  page: number
+}
+
 const List = () => {
 
   const [page, setPage] = useState<SpringPage<Employee>>();
+
+  const [pageControl, setPageControl] = useState<PageControl>({page: 0});
 
   useEffect(() => {
     const config: AxiosRequestConfig = {
@@ -30,7 +36,8 @@ const List = () => {
       url: "/employees",
       withCredentials: true,
       params: {
-        size: 4
+        page: pageControl.page,
+        size: 5
       }
     };
 
@@ -39,10 +46,10 @@ const List = () => {
         setPage(response.data);
       })
 
-  }, []);
+  }, [pageControl]);
 
   const handlePageChange = (pageNumber: number) => {
-    // to do
+    setPageControl({...pageControl, page: pageNumber});
   };
 
   return (
@@ -62,7 +69,7 @@ const List = () => {
 
       <Pagination
         forcePage={0}
-        pageCount={1}
+        pageCount={page ? page.totalPages : 1}
         range={3}
         onChange={handlePageChange}
       />
